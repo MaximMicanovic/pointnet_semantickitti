@@ -154,7 +154,7 @@ def main():
     # Initialize device and points
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     points = load_points("pcd_data/asciiout.pcd", amount_points_to_load)
-    """
+
     print("Device and points initialized")
 
     num_classes = 25
@@ -165,11 +165,6 @@ def main():
     # Model segments data
     points, colors = model_segment(device, points, num_classes)
     print("Model segmented data")
-    """
-
-    colors = []
-    for point in points:
-        colors.append([255, 255, 255])
 
     rustlib.render_points(points, colors)
 
