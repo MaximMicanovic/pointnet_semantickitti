@@ -31,6 +31,6 @@ The project was developed with **UV**
 
 ### Installation
 ```bash
-git clone https://github.com/MaximMicanovic/pointnet_semantickitty
+git clone https://github.com/MaximMicanovic/pointnet_semantickitti
 cd pointnet_semantikitti
 uv run
