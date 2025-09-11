@@ -1,0 +1,58 @@
+[project]
+name = "PC_Classifier"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+	"torch>=2.7.0",
+	"torchvision>=0.23.0",
+	"pydantic<=2.11.7",
+    "numpy>=1.26.4",
+	"scipy>=1.13.1",
+
+	#Pandas dependencies
+	"six>=1.5",
+	"tzdata>=2022.7",
+	"pyparsing>=2.3.1",
+	"kiwisolver>=1.3.1",
+	"cycler>=0.10.0",
+	"contourpy>=1.0.1",
+	"matplotlib>=3.10.6",
+	"pytz>=2020.1",
+	"python-dateutil>=2.9.0",
+	"pandas>=2.3.2",
+	"fonttools>=4.22.0",
+	
+	"rustlib @ /run/media/maxim/ExtraDisc/Programming/Python/PC_Classifier/rust_wheel/rustlib-0.1.18-cp313-cp313-manylinux_2_34_x86_64.whl",
+	]
+
+
+[tool.uv.sources]
+pydantic = [{ index = "pypi" }]
+scipy = [{ index = "pypi" }]
+#Oh my god, pandas is a monster
+pandas = [{ index = "pypi" }]
+python-dateutil = [{ index = "pypi" }]
+matplotlib = [{ index = "pypi" }]
+pytz = [{ index = "pypi" }]
+contourpy = [{ index = "pypi" }]
+cycler = [{ index = "pypi" }]
+fonttools = [{ index = "pypi" }]
+kiwisolver = [{ index = "pypi" }]
+pyparsing = [{ index = "pypi" }]
+tzdata = [{ index = "pypi" }]
+six = [{ index = "pypi" }]
+
+[[tool.uv.index]]
+name = "pytorch-rocm"
+url = "https://download.pytorch.org/whl/rocm6.4"
+default = true
+
+[[tool.uv.index]]
+name = "pypi"
+url = "https://pypi.org/simple"
+explicit = true
+
+[tool.maturin]
+include = ["rustlib/*.pyu", "rustlib/py.typed"]
