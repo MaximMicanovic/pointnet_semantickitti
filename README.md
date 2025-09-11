@@ -1,6 +1,6 @@
 # PointNet for SemanticKITTI
 This project implements **3D semantic segmentation** on the [SemanticKITTI](https://semantic-kitti.org/) dataset using the **PointNet architecture**.  
-The goal was to understand **PointNet** architecture.
+The goal was to understand **PointNet** architecture and to test the performance of the **RX 9070 XT** GPU.
 
 ---
 
