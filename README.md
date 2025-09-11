@@ -22,7 +22,7 @@ The goal was to understand **PointNet** architecture and to test the performance
 # Pictures and Results
 We can see that PointNet could somewhat tell what vegetation is but had in general problems with distinguishing humans/motorcycles and buildings in a completlely new dataset. This issue could be exacerbated by using the use of different LiDAR systems. 
 <img src="pictures/white.png"  width=500 height="500">
-<img src="pictures/colored.png" width="500" height="500">
+<img src="pictures/colored.png" width="500" height="500"><br>
 Before and after the segmentation the colors represent one of it's 25 outputs. I used similar colors to semantic-kittis dataset.
 
 ---
