@@ -4,10 +4,10 @@ Dataset module for SemanticKITTI dataset
 
 from pathlib import Path
 
-import pandas as pd
 import numpy as np
-from torch.utils.data import Dataset
+import pandas as pd
 from scipy.spatial import cKDTree
+from torch.utils.data import Dataset
 
 from pc_classifier.transforms import Transforms
 
@@ -264,18 +264,16 @@ class PointsOneSegment(Dataset):
 
     Args:
         Dataset (Dataset): Dataset class
-        points (np.ndarray): Points
+        points (np.ndarray): Points float32[N, 3]
     """
 
     def __init__(self, points: np.ndarray):
+        if len(points) == 0:
+            raise ValueError("PointsOneSegment has no points to query.")
         self.points: np.ndarray = points
         self.tree: cKDTree = cKDTree(points)
 
     def __getitem__(self, idx: int):
-        num_points = self.points.shape[0]
-        if num_points == 0:
-            raise ValueError("PointsOneSegment has no points to query.")
-
         # Ensure k does not exceed available points
         _, neighbor_indices = self.tree.query(self.points[idx], k=1024)
         closest_pts = self.points[neighbor_indices]
