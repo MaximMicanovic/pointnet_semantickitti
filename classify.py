@@ -1,8 +1,7 @@
 """This is for segmenting data with the model"""
 
-import colorsys
+import pandas as pd
 import numpy as np
-from typing import Dict, List
 
 # My own little wheel
 import rustlib
@@ -11,8 +10,8 @@ from pc_classifier.neuralnetcode import PointNet
 from pc_classifier.dataset import PointsOneSegment
 
 import torch
-from torch.utils.data import DataLoader
 from torch import autocast, cpu
+from torch.utils.data import DataLoader
 
 
 def making_npndarray(points: list[float]):
@@ -42,7 +41,7 @@ def load_points(path: str, amount: int):
     points = rustlib.read_lidar_data(path, amount)
     points = rustlib.flip_points(points)
     points = rustlib.flip_points(points)
-    points = rustlib.normalize_points(points, 30)
+    # points = rustlib.normalize_points(points, 30)
     return making_npndarray(points)
 
 
@@ -145,17 +144,37 @@ def model_segment(
     return points, corresponding_colors(return_outputs)
 
 
+def save_classified_points(points: list[np.ndarray], colors: list[torch.Tensor]):
+    """Save classified points"""
+    save_points = []
+    for point_color in zip(points, colors):
+        save_points.append(point_color)
+    pd.DataFrame(save_points).to_feather("classified_points.feather")
+    print("Points saved")
+
+
+def load_classified_points() -> (list[np.ndarray], list[np.ndarray]):
+    """Load classified points"""
+    loaded_points = pd.read_feather("classified_points.feather")
+    print("Classified points loaded")
+    return loaded_points[0], loaded_points[1]
+
+
 def main():
     """
     Main function
     """
-    amount_points_to_load = 1_024 * 1000
+    amount_points_to_load = 5_000_000
+
+    """
+    loaded_points = pd.read_feather("classified_points.feather")
+    loaded_points[0] = rustlib.normalize_points(loaded_points[0], 30)
+    rustlib.render_points(loaded_points[0], loaded_points[1])
+    """
 
     # Initialize device and points
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     points = load_points("pcd_data/asciiout.pcd", amount_points_to_load)
-
-    print("Device and points initialized")
 
     num_classes = 25
 
@@ -166,7 +185,8 @@ def main():
     points, colors = model_segment(device, points, num_classes)
     print("Model segmented data")
 
-    rustlib.render_points(points, colors)
+    save_classified_points(points, colors)
+    # rustlib.render_points(points, colors)
 
 
 if __name__ == "__main__":
