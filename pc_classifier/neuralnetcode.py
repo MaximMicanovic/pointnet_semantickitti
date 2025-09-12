@@ -2,22 +2,18 @@
 Neuralnetcode module for PointNet
 """
 
+from itertools import pairwise
+
 import torch
+import torch.nn as nn
 from torch.nn import Sequential
 
 
-def make_conv_seq(layersizes: list[int]) -> Sequential:
-    """Make a sequential model"""
-    seq = []
-    for at_current, at_next in zip(layersizes[:-1], layersizes[1:]):
-        seq.append(
-            Sequential(
-                torch.nn.Conv1d(at_current, at_next, kernel_size=1),
-                torch.nn.BatchNorm1d(at_next),
-                torch.nn.ReLU(),
-            )
-        )
-    return Sequential(*seq)
+def make_conv_seq(layersizes: list[int]) -> nn.Sequential:
+    layers = []
+    for i, o in pairwise(layersizes):
+        layers.extend([nn.Conv1d(i, o, 1), nn.BatchNorm1d(o), nn.ReLU()])
+    return nn.Sequential(*layers)
 
 
 def make_lin_seq(layersizes: list[int]) -> Sequential:
@@ -30,33 +26,34 @@ def make_lin_seq(layersizes: list[int]) -> Sequential:
     Returns:
         Sequential: The sequential model
     """
-    seq = []
-    for at_current, at_next in zip(layersizes[:-1], layersizes[1:]):
-        seq.append(
-            Sequential(
-                torch.nn.Linear(at_current, at_next),
-                torch.nn.BatchNorm1d(at_next),
-                torch.nn.ReLU(),
-            )
-        )
-    return Sequential(*seq)
+    layer = []
+    for i, o in pairwise(layersizes):
+        layer.extend([nn.Linear(i, o), nn.BatchNorm1d(o), nn.ReLU()])
+    return Sequential(*layer)
 
 
 class TNet(torch.nn.Module):
     """TNet module"""
 
-    def __init__(self, k: int):
+    def __init__(
+        self,
+        k: int,
+        conv_channels: list[int] = [64, 128, 1024],
+        lin_channels: list[int] = [1024, 512, 256],
+    ):
         """Initialize the TNet
 
         Args:
             k (int): The number of points
+            conv_channels (list[int]): The number of channels for the convolutional layers
+            lin_channels (list[int]): The number of channels for the linear layers
         """
         super().__init__()
         self.k = k
-        self.layer_conv = make_conv_seq([k, 64, 128, 1024])
-        self.layer_lin = make_lin_seq([1024, 512, 256])
+        self.layer_conv = make_conv_seq([k, *conv_channels])
+        self.layer_lin = make_lin_seq([conv_channels[-1], *lin_channels])
 
-        self.fc_rot = torch.nn.Linear(256, k * k)
+        self.fc_rot = torch.nn.Linear(lin_channels[-1], k * k)
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         """Forward pass
