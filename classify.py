@@ -1,17 +1,15 @@
 """This is for segmenting data with the model"""
 
-import pandas as pd
 import numpy as np
+import pandas as pd
 
 # My own little wheel
 import rustlib
-
-from pc_classifier.neuralnetcode import PointNet
-from pc_classifier.dataset import PointsOneSegment
-
 import torch
-from torch import autocast, cpu
 from torch.utils.data import DataLoader
+
+from pc_classifier.dataset import PointsOneSegment
+from pc_classifier.neuralnetcode import PointNet
 
 
 def making_npndarray(points: list[float]):
@@ -94,11 +92,9 @@ def corresponding_colors(outputs: list[list[int]]):
         25: [255, 255, 50],
     }
     colors = []
-    for i, output in enumerate(outputs):
-        to_fit_colors = []
-        for value in color_map[torch.argmax(output).item()]:
-            to_fit_colors = color_map[torch.argmax(output).item()]
-        colors.append([to_fit_colors[i] / 255.0 for i in range(3)])
+    for output in outputs:
+        rbg_color = color_map[torch.argmax(output).item()]
+        colors.append([rgb / 255.0 for rgb in rbg_color])
     return colors
 
 
