@@ -174,34 +174,25 @@ class PointsDataset(Dataset):
         Raises:
             RuntimeError: No matching bin/label files found.
         """
-        # Collect all .bin files recursively across all sequence folders
-        self.bin_paths: list[Path] = sorted(Path(bin_dir).rglob("*.bin"))
-        # Root directory that contains all per-sequence label folders
-        self.label_root: Path = Path(label_dir)
+        self.bin_paths, self.label_root = sorted(Path(bin_dir).rglob("*.bin")), Path(
+            label_dir
+        )
 
-        # Sum of points
         self.sum_points: int = 0
 
-        # Number of classes
         self.num_classes: int = num_classes
 
-        # Current tree for current scan && current scan id
         self.current_tree: cKDTree = None
         self.current_scan_id: int = None
 
-        # Counter for swapping frames
         self.counter, self.counter_swap = 0, 0
 
-        # Current points, semantic raw, and instance
         self.current_pts, self.current_sem_raw, self.current_inst = None, None, None
 
-        # Transforms to apply to the points
         self.transforms = transforms
 
-        # Keep only frames that have both bin and corresponding label
         self.frames = load_bin_paths(self.bin_paths, self.label_root)
 
-        # Stable dataset length across scans for samplers/dataloaders
         self.most_points_in_a_scan: int = max(f["num_points"] for f in self.frames)
 
         new_frame_idx = np.random.randint(0, len(self.frames))
@@ -250,7 +241,7 @@ class PointsDataset(Dataset):
             for transform in self.transforms:
                 closest_pts = transform(closest_pts)
 
-        # remap moving labels to static IDs and build one-hot for this point
+        # Remap moving labels to static IDs and build one-hot for this point
         label = self.current_sem_raw[local_idx].astype(np.int64)
         current_label_list = making_label_to_list(int(label), self.num_classes)
         return (closest_pts, current_label_list)
