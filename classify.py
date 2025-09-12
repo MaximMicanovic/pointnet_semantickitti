@@ -165,6 +165,7 @@ def main():
     Main function
     """
     amount_points_to_load = 5_000_000
+    num_classes = 25
 
     """
     loaded_points = pd.read_feather("classified_points.feather")
@@ -175,8 +176,6 @@ def main():
     # Initialize device and points
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     points = load_points("pcd_data/asciiout.pcd", amount_points_to_load)
-
-    num_classes = 25
 
     # points = np.random.choice(len(points), size=100_000, replace=False)
     print("Amount of points after random choice", len(points))
