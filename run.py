@@ -20,9 +20,6 @@ from pc_classifier.transforms import (
 )
 
 
-base_epoch = 0
-
-
 def main() -> None:
     """
     Main function
