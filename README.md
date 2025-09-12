@@ -32,8 +32,8 @@ Before and after the segmentation the colors represent one of it's 25 outputs. I
 ## Usage
 There are two models uploaded in the models folder best_model.pth was saved as early stoppage while model_250.pth was the latest.
 The project was developed with Python package manager **UV**.
-
-### Installation
+<br>
+The file destination for the wheel in the .toml file needs to be changed to the absolute path on the new machine
 ```bash
 git clone https://github.com/MaximMicanovic/pointnet_semantickitti
 cd pointnet_semantikitti
