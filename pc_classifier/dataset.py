@@ -255,22 +255,19 @@ class PointsOneSegment(Dataset):
 
     Args:
         Dataset (Dataset): Dataset class
-        points (np.ndarray): Points
+        points (np.ndarray): Points float32[N, 3]
     """
 
     def __init__(self, points: np.ndarray):
         self.points: np.ndarray = points
+        if len(points) == 0:
+            raise ValueError("PointsOneSegment has no points to query.")
         self.tree: cKDTree = cKDTree(points)
 
     def __getitem__(self, idx: int):
-        num_points = self.points.shape[0]
-        if num_points == 0:
-            raise ValueError("PointsOneSegment has no points to query.")
-
         # Ensure k does not exceed available points
         _, neighbor_indices = self.tree.query(self.points[idx], k=1024)
-        closest_pts = self.points[neighbor_indices]
-        closest_pts = closest_pts - self.points[idx]
+        closest_pts = self.points[neighbor_indices] - self.points[idx]
         return closest_pts
 
     def __len__(self) -> int:
