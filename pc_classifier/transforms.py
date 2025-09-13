@@ -90,8 +90,7 @@ class Drop(Transforms):
         """
 
         mask = np.random.rand(points.shape[0]) > self.chance
-        mask = np.repeat(mask, 3).reshape(points.shape)
-        return points * mask.astype(points.dtype)
+        return points * mask[:, np.newaxis].astype(points.dtype)
 
 
 class Jitter(Transforms):
