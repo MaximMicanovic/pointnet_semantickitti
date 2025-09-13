@@ -50,7 +50,7 @@ def load_model(device: torch.device, num_classes: int):
     Load the model
     """
     model = PointNet(num_classes)
-    model.load_state_dict(torch.load("models/best_model.pth", weights_only=True))
+    model.load_state_dict(torch.load("models/model_249.pth", weights_only=True))
     model.eval()
     model.to(device)
     return model
@@ -100,14 +100,6 @@ def corresponding_colors(outputs: list[list[int]]):
     return colors
 
 
-def reforming_points(points: list[np.ndarray]):
-    """Reforming points"""
-    return_points = []
-    for point in points:
-        return_points.extend(point.tolist())
-    return return_points
-
-
 def model_segment(
     device: torch.device, points: np.ndarray, num_classes: int
 ) -> tuple[list[np.ndarray], list[torch.Tensor]]:
@@ -142,12 +134,14 @@ def model_segment(
     return points, corresponding_colors(return_outputs)
 
 
-def save_classified_points(points: list[np.ndarray], colors: list[torch.Tensor]):
+def save_classified_points(
+    points: list[np.ndarray], colors: list[torch.Tensor], amount: int
+):
     """Save classified points"""
     save_points = []
     for point_color in zip(points, colors):
         save_points.append(point_color)
-    pd.DataFrame(save_points).to_feather("classified_points.feather")
+    pd.DataFrame(save_points).to_feather(f"classified_points_{amount}.feather")
     print("Points saved")
 
 
@@ -162,7 +156,7 @@ def main():
     """
     Main function
     """
-    amount_points_to_load = 5_000_000
+    amount_points_to_load = 0
     num_classes = 25
 
     """
@@ -182,7 +176,8 @@ def main():
     points, colors = model_segment(device, points, num_classes)
     print("Model segmented data")
 
-    save_classified_points(points, colors)
+    save_classified_points(points, colors, amount=amount_points_to_load)
+    # points = rustlib.normalize_points(points, 5)
     # rustlib.render_points(points, colors)
 
 
