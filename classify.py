@@ -94,11 +94,9 @@ def corresponding_colors(outputs: list[list[int]]):
         25: [255, 255, 50],
     }
     colors = []
-    for i, output in enumerate(outputs):
-        to_fit_colors = []
-        for value in color_map[torch.argmax(output).item()]:
-            to_fit_colors = color_map[torch.argmax(output).item()]
-        colors.append([to_fit_colors[i] / 255.0 for i in range(3)])
+    for output in outputs:
+        rgb_colors = color_map[torch.argmax(output).item()]
+        colors.append([rgb / 255.0 for rgb in rgb_colors])
     return colors
 
 
